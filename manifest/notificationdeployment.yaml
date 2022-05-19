@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: arrivnow
-  namespace: arrivnow
+  name: notification
+  namespace: notification
   labels:
-    app: arrivnow
+    app: notification
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: arrivnow
+      app: notification
   template:
     metadata:
       labels:
-        app: arrivnow
+        app: notification
     spec:
       containers:
-      - name: arrivnow
+      - name: notification
         image: vapprtech/notification:latest
         imagePullPolicy: Always
         ports:
