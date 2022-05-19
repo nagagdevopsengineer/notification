@@ -25,8 +25,8 @@ docker-build-image:
     - main
 
 
-deploy-usermanagement:
-  stage: deploy_usermanagement
+deploy-notification:
+  stage: deploy_notification
   #needs: ["docker-build-image"]
   image: vapprtech/awskubectl:latest
   before_script:
