@@ -21,4 +21,4 @@ spec:
         imagePullPolicy: Always
         ports:
         - name: https
-          containerPort: 4200
+          containerPort: 3000
