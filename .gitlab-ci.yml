@@ -1,5 +1,6 @@
 image: docker:19.03.12
 
+
 variables:
   CONTAINER_IMAGE: "vapprtech/notification:latest"
   DOCKER_TLS_CERTDIR: "/certs"
@@ -16,8 +17,8 @@ docker-build-image:
   script:
     - docker info
     - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD}
-    #- docker build -t ${CONTAINER_IMAGE} .
-    - npm run docker:build
+    - docker build -t ${CONTAINER_IMAGE} .
+    #- npm run docker:build
     - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE}
     - docker tag ${CONTAINER_IMAGE} vapprtech/notification:latest
     - docker push ${CONTAINER_IMAGE}
