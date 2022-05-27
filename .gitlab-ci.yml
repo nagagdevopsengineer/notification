@@ -38,6 +38,7 @@ deploy-notification:
     #  - sed -i "s/latest/${CI_COMMIT_SHORT_SHA}/g" manifest/user_management/usermanagementdeployment.yaml
       - cat manifest/notificationdeployment.yaml
       - kubectl apply -f manifest/
+      - kubectl rollout restart deployment notification -n notification
       - kubectl get pods -n  notification 
       - kubectl get svc -n notification -o wide
   when: always
