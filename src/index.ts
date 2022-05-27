@@ -1,6 +1,7 @@
 import {ApplicationConfig, Notification} from './application';
 
 export * from './application';
+const dotenv = require('dotenv').config();
 
 export async function main(options: ApplicationConfig = {}) {
   const app = new Notification(options);

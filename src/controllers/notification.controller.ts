@@ -1,6 +1,15 @@
 // Uncomment these imports to begin using these cool features!
 
 // import {inject} from '@loopback/core';
+import {
+  Count,
+  CountSchema,
+  Filter,
+  FilterExcludingWhere,
+  repository,
+  Where,
+} from "@loopback/repository";
+const dotenv = require("dotenv").config();
 
 import {
   del,
@@ -11,23 +20,128 @@ import {
   post,
   put,
   requestBody,
-  response
-} from '@loopback/rest';
+  response,
+} from "@loopback/rest";
 
-const axios = require('axios');
+const axios = require("axios");
+import { Notification } from "../models";
+import { NotificationRepository } from "../repositories";
 
 export class NotificationController {
-  constructor() {}
+  NotificationRepository: any;
+  constructor(
+    @repository(NotificationRepository)
+    public notificationRepository: NotificationRepository
+  ) {}
 
-  @get('/notifications')
-  async getNotification(
-    @param.query.string('app_id') app_id: string,
-  ) {
-    return app_id
+  //Notification for singal object
+  @post("/notification")
+  @response(200, {
+    description: "Notification sent successfully",
+    content: {
+      "application/json": { schema: getModelSchemaRef(Notification) },
+    },
+  })
+  async create(
+    @requestBody({
+      content: {
+        "application/json": {
+          schema: getModelSchemaRef(Notification, {
+            title: "NewNotification",
+            exclude: ["id"],
+          }),
+        },
+      },
+    })
+    notification: Omit<Notification, "id">
+  ): Promise<Notification> {
+    console.log(notification.playerid,'pp')
+    if(notification.playerid!==null){
+      const onesignaldata = {
+        app_id: process.env.ONESIGNAL_APPID,
+        include_player_ids: [notification.playerid],
+        contents: { en: "Succefully boarded " },
+      };
+      console.log(onesignaldata)
+      axios
+      .post(`${process.env.ONESIGNAL_API}/notifications`, onesignaldata, {
+        headers: {
+          Authorization:
+            "Basic NDUxM2FkYmEtNDgxMS00OGI2LWE2YWUtNzE2Y2Q3NDZlMmJj",
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res: any) => {
+        console.log("Notification sent successfully.");
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
+    }
+    
+    
+    return this.notificationRepository.create(notification);
   }
 
-  @post('/notifications')
-  async createNotification() {
-    return "Hello WOrld"
+  // Notification for array of objects
+  @post("/bulknotifications")
+  @response(200, {
+    description: "Notification sent successfully",
+    content: {
+      "application/json": { schema: getModelSchemaRef(Notification) },
+    },
+  })
+  async createNotifications(
+    @requestBody({
+      content: {
+        "application/json": {},
+      },
+    })
+    playerIds: []
+  ): Promise<any> {
+    let ids: any[] = [];
+    console.log(playerIds, "PalyerIDs");
+    playerIds.map((player: any) => {
+      if (player.playerid !== null) {
+        ids.push(player.playerid);
+      }
+    });
+    const appId = process.env.ONESIGNAL_APPID;
+    console.log(process.env.ONESIGNAL_APPID);
+    const onesignaldata = {
+      app_id: process.env.ONESIGNAL_APPID,
+      include_player_ids: ids,
+      contents: { en: "Your trip has started" },
+    };
+    axios
+      .post(`${process.env.ONESIGNAL_API}/notifications`, onesignaldata, {
+        headers: {
+          Authorization:
+            "Basic NDUxM2FkYmEtNDgxMS00OGI2LWE2YWUtNzE2Y2Q3NDZlMmJj",
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res: any) => {
+        console.log("Notification sent successfully.");
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
+
+    return this.notificationRepository.createAll(playerIds);
   }
+
+  @get("/notifications")
+  @response(200, {
+    description: "Notification sent ",
+    content: { "application/json": { schema: CountSchema } },
+  })
+  async count(
+    @param.where(Notification) where?: Where<Notification>
+  ): Promise<Count> {
+    return this.notificationRepository.count(where);
+  }
+}
+function include_player_ids(include_player_ids: any) {
+  throw new Error("Function not implemented.");
 }

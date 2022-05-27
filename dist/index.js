@@ -5,6 +5,7 @@ exports.main = void 0;
 const tslib_1 = require("tslib");
 const application_1 = require("./application");
 tslib_1.__exportStar(require("./application"), exports);
+const dotenv = require('dotenv').config();
 async function main(options = {}) {
     const app = new application_1.Notification(options);
     await app.boot();
