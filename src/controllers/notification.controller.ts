@@ -113,6 +113,7 @@ export class NotificationController {
       include_player_ids: ids,
       contents: { en: "Your trip has started" },
     };
+    console.log(onesignaldata,'one')
     axios
       .post(`${process.env.ONESIGNAL_API}/notifications`, onesignaldata, {
         headers: {
@@ -130,18 +131,28 @@ export class NotificationController {
 
     return this.notificationRepository.createAll(playerIds);
   }
-
-  @get("/notifications")
+ 
+  @get('/notifications')
   @response(200, {
-    description: "Notification sent ",
-    content: { "application/json": { schema: CountSchema } },
+    description: 'Array of Vehiclelocation model instances',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(Notification, {includeRelations: true}),
+        },
+      },
+    },
   })
-  async count(
-    @param.where(Notification) where?: Where<Notification>
-  ): Promise<Count> {
-    return this.notificationRepository.count(where);
+  async find(
+    @param.query.string('employeeId') employeeId: string,
+    // @param.filter(Notification) filter?: Filter<Notification>,
+  ): Promise<Notification[]> {
+    let res = await this.notificationRepository.find({where:{employeeId: employeeId}});
+     return res
   }
 }
+
 function include_player_ids(include_player_ids: any) {
   throw new Error("Function not implemented.");
 }

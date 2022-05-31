@@ -1,4 +1,3 @@
-import { Count, Where } from "@loopback/repository";
 import { Notification } from "../models";
 import { NotificationRepository } from "../repositories";
 export declare class NotificationController {
@@ -7,5 +6,5 @@ export declare class NotificationController {
     constructor(notificationRepository: NotificationRepository);
     create(notification: Omit<Notification, "id">): Promise<Notification>;
     createNotifications(playerIds: []): Promise<any>;
-    count(where?: Where<Notification>): Promise<Count>;
+    find(employeeId: string): Promise<Notification[]>;
 }

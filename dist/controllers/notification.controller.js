@@ -56,6 +56,7 @@ let NotificationController = class NotificationController {
             include_player_ids: ids,
             contents: { en: "Your trip has started" },
         };
+        console.log(onesignaldata, 'one');
         axios
             .post(`${process.env.ONESIGNAL_API}/notifications`, onesignaldata, {
             headers: {
@@ -71,8 +72,9 @@ let NotificationController = class NotificationController {
         });
         return this.notificationRepository.createAll(playerIds);
     }
-    async count(where) {
-        return this.notificationRepository.count(where);
+    async find(employeeId) {
+        let res = await this.notificationRepository.find({ where: { employeeId: employeeId } });
+        return res;
     }
 };
 tslib_1.__decorate([
@@ -115,16 +117,23 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", Promise)
 ], NotificationController.prototype, "createNotifications", null);
 tslib_1.__decorate([
-    (0, rest_1.get)("/notifications"),
+    (0, rest_1.get)('/notifications'),
     (0, rest_1.response)(200, {
-        description: "Notification sent ",
-        content: { "application/json": { schema: repository_1.CountSchema } },
+        description: 'Array of Vehiclelocation model instances',
+        content: {
+            'application/json': {
+                schema: {
+                    type: 'array',
+                    items: (0, rest_1.getModelSchemaRef)(models_1.Notification, { includeRelations: true }),
+                },
+            },
+        },
     }),
-    tslib_1.__param(0, rest_1.param.where(models_1.Notification)),
+    tslib_1.__param(0, rest_1.param.query.string('employeeId')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [Object]),
+    tslib_1.__metadata("design:paramtypes", [String]),
     tslib_1.__metadata("design:returntype", Promise)
-], NotificationController.prototype, "count", null);
+], NotificationController.prototype, "find", null);
 NotificationController = tslib_1.__decorate([
     tslib_1.__param(0, (0, repository_1.repository)(repositories_1.NotificationRepository)),
     tslib_1.__metadata("design:paramtypes", [repositories_1.NotificationRepository])
