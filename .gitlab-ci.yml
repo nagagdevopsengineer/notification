@@ -1,6 +1,5 @@
 image: docker:19.03.12
 
-
 variables:
   CONTAINER_IMAGE: "vapprtech/notification:latest"
   DOCKER_TLS_CERTDIR: "/certs"
@@ -10,7 +9,8 @@ services:
 
 stages:          # List of stages for jobs, and their order of execution
   - build_image
-  - deploy_notification
+  - deploy_arrivnow-dev
+  - deploy_arrivnow-qa
 
 docker-build-image:
   stage: build_image
@@ -18,29 +18,48 @@ docker-build-image:
     - docker info
     - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD}
     - docker build -t ${CONTAINER_IMAGE} .
-    #- npm run docker:build
     - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE}
     - docker tag ${CONTAINER_IMAGE} vapprtech/notification:latest
     - docker push ${CONTAINER_IMAGE}
   when: always
   only: 
-    - main
+    - develop
 
 
-deploy-notification:
-  stage: deploy_notification
+deploy-arrivnow-dev:
+  stage: deploy_arrivnow-dev
   #needs: ["docker-build-image"]
   image: vapprtech/awskubectl:latest
   before_script:
+    #- The below cluster name would be updated per branch based on some condition
+    
     - aws eks update-kubeconfig --name arrivnow-dev --region us-east-2 
-    - kubectl create namespace notification  --dry-run=client -o yaml | kubectl apply -f -   
+
+    - kubectl create namespace notification --dry-run=client -o yaml | kubectl apply -f -   
   script:
-    #  - sed -i "s/latest/${CI_COMMIT_SHORT_SHA}/g" manifest/user_management/usermanagementdeployment.yaml
-      - cat manifest/notificationdeployment.yaml
-      - kubectl apply -f manifest/
-      - kubectl rollout restart deployment notification -n notification
-      - kubectl get pods -n  notification 
+     # - sed -i "s/<VERSION>/${CI_COMMIT_SHORT_SHA}/g" manifest/crmdeployment.yaml
+      - kubectl apply -f manifest
+      - kubectl get pods -n notification 
       - kubectl get svc -n notification -o wide
   when: always
   only: 
-    - main
+    - develop
+
+deploy-arrivnow-qa:
+  stage: deploy_arrivnow-qa
+  #needs: ["docker-build-image"]
+  image: vapprtech/awskubectl:latest
+  before_script:
+    #- The below cluster name would be updated per branch based on some condition
+    
+    - aws eks update-kubeconfig --name arrivnow-qa --region us-east-2 
+
+    - kubectl create namespace notification --dry-run=client -o yaml | kubectl apply -f -   
+  script:
+     # - sed -i "s/<VERSION>/${CI_COMMIT_SHORT_SHA}/g" manifest/crmdeployment.yaml
+      - kubectl apply -f manifest
+      - kubectl get pods -n notification 
+      - kubectl get svc -n notification -o wide
+  when: always
+  only: 
+    - staging    

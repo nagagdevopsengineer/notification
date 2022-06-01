@@ -11,7 +11,7 @@ metadata:
 
 spec:
   rules:
-   - host: dev-notification.vapprtech.com
+   - host: qa-notification.vapprtech.com
    - http:
         paths:
           - path: /
