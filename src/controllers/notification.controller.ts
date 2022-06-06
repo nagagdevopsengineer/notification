@@ -101,35 +101,41 @@ export class NotificationController {
   ): Promise<any> {
     let ids: any[] = [];
     console.log(playerIds, "PalyerIDs");
-    playerIds.map((player: any) => {
-      if (player.playerid !== null) {
-        ids.push(player.playerid);
-      }
-    });
-    const appId = process.env.ONESIGNAL_APPID;
-    console.log(process.env.ONESIGNAL_APPID);
-    const onesignaldata = {
-      app_id: process.env.ONESIGNAL_APPID,
-      include_player_ids: ids,
-      contents: { en: "Your trip has started" },
-    };
-    console.log(onesignaldata,'one')
-    axios
-      .post(`${process.env.ONESIGNAL_API}/notifications`, onesignaldata, {
-        headers: {
-          Authorization:
-            "Basic NDUxM2FkYmEtNDgxMS00OGI2LWE2YWUtNzE2Y2Q3NDZlMmJj",
-          "Content-Type": "application/json",
-        },
-      })
-      .then((res: any) => {
-        console.log("Notification sent successfully.");
-      })
-      .catch((err: any) => {
-        console.log(err);
-      });
+    if(playerIds.length>0){
 
-    return this.notificationRepository.createAll(playerIds);
+      playerIds.map((player: any) => {
+        if (player.playerid !== null) {
+          ids.push(player.playerid);
+        }
+      });
+      const appId = process.env.ONESIGNAL_APPID;
+      console.log(process.env.ONESIGNAL_APPID);
+      const onesignaldata = {
+        app_id: process.env.ONESIGNAL_APPID,
+        include_player_ids: ids,
+        contents: { en: "Your trip has started" },
+      };
+      console.log(onesignaldata,'one')
+      console.log(process.env.ONESIGNAL_API)
+      axios
+        .post(`${process.env.ONESIGNAL_API}/notifications`, onesignaldata, {
+          headers: {
+            Authorization:
+              "Basic NDUxM2FkYmEtNDgxMS00OGI2LWE2YWUtNzE2Y2Q3NDZlMmJj",
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res: any) => {
+          console.log("Notification sent successfully.");
+        })
+        .catch((err: any) => {
+          console.log("Something went wrong");
+        });
+  
+      return this.notificationRepository.createAll(playerIds);
+
+    }
+  
   }
  
   @get('/notifications')
@@ -146,9 +152,12 @@ export class NotificationController {
   })
   async find(
     @param.query.string('employeeId') employeeId: string,
+    @param.query.string('newDate') newDate: string,
+
     // @param.filter(Notification) filter?: Filter<Notification>,
   ): Promise<Notification[]> {
-    let res = await this.notificationRepository.find({where:{employeeId: employeeId}});
+    // console.log(n)
+    let res = await this.notificationRepository.find({where:{employeeId: employeeId, newDate:newDate}});
      return res
   }
 }

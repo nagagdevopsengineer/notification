@@ -39,6 +39,13 @@ tslib_1.__decorate([
 tslib_1.__decorate([
     (0, repository_1.property)({
         type: 'string',
+        required: true,
+    }),
+    tslib_1.__metadata("design:type", String)
+], Notification.prototype, "newDate", void 0);
+tslib_1.__decorate([
+    (0, repository_1.property)({
+        type: 'string',
     }),
     tslib_1.__metadata("design:type", String)
 ], Notification.prototype, "contenttype", void 0);

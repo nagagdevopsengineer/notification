@@ -44,36 +44,40 @@ let NotificationController = class NotificationController {
     async createNotifications(playerIds) {
         let ids = [];
         console.log(playerIds, "PalyerIDs");
-        playerIds.map((player) => {
-            if (player.playerid !== null) {
-                ids.push(player.playerid);
-            }
-        });
-        const appId = process.env.ONESIGNAL_APPID;
-        console.log(process.env.ONESIGNAL_APPID);
-        const onesignaldata = {
-            app_id: process.env.ONESIGNAL_APPID,
-            include_player_ids: ids,
-            contents: { en: "Your trip has started" },
-        };
-        console.log(onesignaldata, 'one');
-        axios
-            .post(`${process.env.ONESIGNAL_API}/notifications`, onesignaldata, {
-            headers: {
-                Authorization: "Basic NDUxM2FkYmEtNDgxMS00OGI2LWE2YWUtNzE2Y2Q3NDZlMmJj",
-                "Content-Type": "application/json",
-            },
-        })
-            .then((res) => {
-            console.log("Notification sent successfully.");
-        })
-            .catch((err) => {
-            console.log(err);
-        });
-        return this.notificationRepository.createAll(playerIds);
+        if (playerIds.length > 0) {
+            playerIds.map((player) => {
+                if (player.playerid !== null) {
+                    ids.push(player.playerid);
+                }
+            });
+            const appId = process.env.ONESIGNAL_APPID;
+            console.log(process.env.ONESIGNAL_APPID);
+            const onesignaldata = {
+                app_id: process.env.ONESIGNAL_APPID,
+                include_player_ids: ids,
+                contents: { en: "Your trip has started" },
+            };
+            console.log(onesignaldata, 'one');
+            console.log(process.env.ONESIGNAL_API);
+            axios
+                .post(`${process.env.ONESIGNAL_API}/notifications`, onesignaldata, {
+                headers: {
+                    Authorization: "Basic NDUxM2FkYmEtNDgxMS00OGI2LWE2YWUtNzE2Y2Q3NDZlMmJj",
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((res) => {
+                console.log("Notification sent successfully.");
+            })
+                .catch((err) => {
+                console.log("Something went wrong");
+            });
+            return this.notificationRepository.createAll(playerIds);
+        }
     }
-    async find(employeeId) {
-        let res = await this.notificationRepository.find({ where: { employeeId: employeeId } });
+    async find(employeeId, newDate) {
+        // console.log(n)
+        let res = await this.notificationRepository.find({ where: { employeeId: employeeId, newDate: newDate } });
         return res;
     }
 };
@@ -130,8 +134,9 @@ tslib_1.__decorate([
         },
     }),
     tslib_1.__param(0, rest_1.param.query.string('employeeId')),
+    tslib_1.__param(1, rest_1.param.query.string('newDate')),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [String]),
+    tslib_1.__metadata("design:paramtypes", [String, String]),
     tslib_1.__metadata("design:returntype", Promise)
 ], NotificationController.prototype, "find", null);
 NotificationController = tslib_1.__decorate([

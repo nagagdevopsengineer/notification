@@ -28,6 +28,12 @@ export class Notification extends Entity {
 
   @property({
     type: 'string',
+    required: true,
+  })
+  newDate: string;
+
+  @property({
+    type: 'string',
   })
   contenttype?: string;
 

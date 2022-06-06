@@ -6,5 +6,5 @@ export declare class NotificationController {
     constructor(notificationRepository: NotificationRepository);
     create(notification: Omit<Notification, "id">): Promise<Notification>;
     createNotifications(playerIds: []): Promise<any>;
-    find(employeeId: string): Promise<Notification[]>;
+    find(employeeId: string, newDate: string): Promise<Notification[]>;
 }

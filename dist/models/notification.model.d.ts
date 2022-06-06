@@ -4,6 +4,7 @@ export declare class Notification extends Entity {
     notificationId?: number;
     notificationtype?: string;
     employeeId: string;
+    newDate: string;
     contenttype?: string;
     [prop: string]: any;
     constructor(data?: Partial<Notification>);
