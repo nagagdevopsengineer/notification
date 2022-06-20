@@ -97,7 +97,7 @@ export class NotificationController {
         "application/json": {},
       },
     })
-    playerIds: []
+    playerIds: any[]=[]
   ): Promise<any> {
     let ids: any[] = [];
     console.log(playerIds, "PalyerIDs");
@@ -111,7 +111,8 @@ export class NotificationController {
     const onesignaldata = {
       app_id: process.env.ONESIGNAL_APPID,
       include_player_ids: ids,
-      contents: { en: "Your trip has started" },
+      // contents: { en: "Your trip has started" },
+        contents:  {en :  playerIds[0].contenttype} ,
     };
     console.log(onesignaldata,'one')
     axios
