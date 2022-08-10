@@ -5,7 +5,7 @@ const config = {
   name: 'halt',
   connector: 'mongodb',
   url: '',
-  host: '65.0.139.196',
+  host: '3.111.104.11',
   port: 27017,
   user: 'trackingapp',
   password: 'arrivnow123',
