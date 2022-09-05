@@ -111,8 +111,19 @@ export class NotificationController {
     const onesignaldata = {
       app_id: process.env.ONESIGNAL_APPID,
       include_player_ids: ids,
-      // contents: { en: "Your trip has started" },
-        contents:  {en :  playerIds[0].contenttype} ,
+      contents:  {en :  playerIds[0].contenttype} ,
+      buttons: [
+        {     
+          "id": "a1",
+          "text": "Ola",
+          "url": "https://play.google.com/store/apps/details?id=com.olacabs.customer"
+        },   
+        {     
+          "id": "a2",     
+          "text": "Uber",
+          "url": "https://play.google.com/store/apps/details?id=com.olacabs.customer"
+        }
+      ]
     };
     console.log(onesignaldata,'one')
     axios
